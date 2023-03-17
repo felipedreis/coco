@@ -10,6 +10,7 @@
 #include <string.h>
 #include <time.h>
 #include <assert.h>
+#include <pthread.h>
 
 #include "coco.h"
 
@@ -43,12 +44,36 @@ typedef void (*evaluate_function_t)(const double *x, double *y);
  */
 static coco_problem_t *PROBLEM;
 
+typedef struct evaluate_args {
+    const double *x;
+    double *y;
+} evaluate_args_t;
+
+
+static void pthread_evaluate_func(evaluate_args_t evaluate_args) {
+    coco_evaluate_function(PROBLEM, evaluate_args.x, evaluate_args.y);
+}
+
 /**
  * Calls coco_evaluate_function() to evaluate the objective function
  * of the problem at the point x and stores the result in the vector y
  */
 static void evaluate_function(const double *x, double *y) {
-  coco_evaluate_function(PROBLEM, x, y);
+  pthread_t threads[10];
+  int i;
+  printf("pointer to y %d\n", y);
+  fflush(&stdout);
+  evaluate_args_t evaluate_args;
+  evaluate_args.x = x;
+  evaluate_args.y = y;
+
+  for (i = 0; i < 10; ++i)
+    pthread_create(&threads[i], NULL, &pthread_evaluate_func, &evaluate_args);
+
+  for (i = 0; i < 10; ++i)
+    pthread_join(threads[i], NULL);
+
+  /*coco_evaluate_function(PROBLEM, x, y);*/
 }
 
 /**

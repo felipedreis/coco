@@ -90,5 +90,6 @@ void *coco_allocate_memory(const size_t size) {
 }
 
 void coco_free_memory(void *data) {
-  free(data);
+  if (data)
+    free(data);
 }
