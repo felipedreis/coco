@@ -8,8 +8,32 @@
 #include "coco_internal.h"
 
 #include "coco_utilities.c"
-
 /***********************************************************************************************************/
+
+void problem_increment_evaluate_function(coco_problem_t *problem) {
+  pthread_mutex_lock(&problem->mutex);
+
+  problem->evaluations++; /* each derived class has its own counter, only the most outer will be visible */
+
+  pthread_mutex_unlock(&problem->mutex);
+}
+
+void problem_increment_evaluate_constraint(coco_problem_t *problem) {
+  pthread_mutex_lock(&problem->mutex);
+
+  problem->evaluations_constraints++;
+
+  pthread_mutex_unlock(&problem->mutex);
+}
+
+void coco_problem_set_best_observed_f_value(coco_problem_t *problem, double *y){
+  pthread_mutex_lock(&problem->mutex);
+
+  problem->best_observed_fvalue[0] = y[0];
+  problem->best_observed_evaluation[0] = problem->evaluations;
+
+  pthread_mutex_unlock(&problem->mutex);
+}
 
 /**
  * @name Methods regarding the basic COCO problem
@@ -52,7 +76,7 @@ void coco_evaluate_function(coco_problem_t *problem, const double *x, double *y)
   }
 
   problem->evaluate_function(problem, x, y);
-  problem->evaluations++; /* each derived class has its own counter, only the most outer will be visible */
+  problem_increment_evaluate_function(problem);
 
   /* A little bit of bookkeeping */
   if (y[0] < problem->best_observed_fvalue[0]) {
@@ -63,8 +87,7 @@ void coco_evaluate_function(coco_problem_t *problem, const double *x, double *y)
       coco_free_memory(z);
     }
     if (is_feasible) {
-      problem->best_observed_fvalue[0] = y[0];
-      problem->best_observed_evaluation[0] = problem->evaluations;
+      coco_problem_set_best_observed_f_value(problem, y);
     }
   }
 }
@@ -104,7 +127,8 @@ void coco_evaluate_constraint(coco_problem_t *problem, const double *x, double *
   }
   
   problem->evaluate_constraint(problem, x, y);
-  problem->evaluations_constraints++;
+
+  problem_increment_evaluate_constraint(problem);
 }
 
 /**
@@ -193,6 +217,11 @@ static coco_problem_t *coco_problem_allocate(const size_t number_of_variables,
   problem->suite_dep_instance = 0;
   problem->data = NULL;
   problem->versatile_data = NULL; /* Wassim: added to be able to pass data from one transformation to another*/
+
+  if (pthread_mutex_init(&problem->mutex, NULL) != 0) {
+    coco_error("Failed to create problem mutex");
+  }
+
   return problem;
 }
 
@@ -317,6 +346,7 @@ void coco_problem_free(coco_problem_t *problem) {
     problem->suite = NULL;
     problem->data = NULL;
     problem->initial_solution = NULL;
+    pthread_mutex_destroy(&problem->mutex);
     coco_free_memory(problem);
   }
 }

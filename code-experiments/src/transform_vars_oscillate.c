@@ -5,6 +5,7 @@
 
 #include <math.h>
 #include <assert.h>
+#include <pthread.h>
 
 #include "coco.h"
 #include "coco_problem.c"
@@ -33,7 +34,7 @@ static void transform_vars_oscillate_evaluate_function(coco_problem_t *problem, 
   }
 
   data = (transform_vars_oscillate_data_t *) coco_problem_transformed_get_data(problem);
-  oscillated_x = data->oscillated_x; /* short cut to make code more readable */
+  oscillated_x = coco_allocate_vector(problem->number_of_variables); /* short cut to make code more readable */
   inner_problem = coco_problem_transformed_get_inner_problem(problem);
 
   for (i = 0; i < problem->number_of_variables; ++i) {
@@ -50,11 +51,12 @@ static void transform_vars_oscillate_evaluate_function(coco_problem_t *problem, 
     }
   }
   coco_evaluate_function(inner_problem, oscillated_x, y);
-  
+  coco_free_memory(oscillated_x);
+
   if (problem->number_of_constraints > 0) {
     cons_values = coco_allocate_vector(problem->number_of_constraints);
     is_feasible = coco_is_feasible(problem, x, cons_values);
-    coco_free_memory(cons_values);    
+    coco_free_memory(cons_values);
     if (is_feasible)
       assert(y[0] + 1e-13 >= problem->best_value[0]);
   }

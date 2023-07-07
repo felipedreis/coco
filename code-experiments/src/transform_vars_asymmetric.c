@@ -5,6 +5,7 @@
 
 #include <math.h>
 #include <assert.h>
+#include <pthread.h>
 
 #include "coco.h"
 #include "coco_problem.c"
@@ -37,6 +38,7 @@ static void transform_vars_asymmetric_evaluate_function(coco_problem_t *problem,
   data = (transform_vars_asymmetric_data_t *) coco_problem_transformed_get_data(problem);
   inner_problem = coco_problem_transformed_get_inner_problem(problem);
 
+  pthread_mutex_lock(&problem->mutex);
   for (i = 0; i < problem->number_of_variables; ++i) {
     if (x[i] > 0.0) {
       exponent = 1.0
@@ -46,9 +48,10 @@ static void transform_vars_asymmetric_evaluate_function(coco_problem_t *problem,
       data->x[i] = x[i];
     }
   }
+  pthread_mutex_unlock(&problem->mutex);
   
   coco_evaluate_function(inner_problem, data->x, y);
-  
+
   if (problem->number_of_constraints > 0) {
     cons_values = coco_allocate_vector(problem->number_of_constraints);
     is_feasible = coco_is_feasible(problem, x, cons_values);
@@ -67,6 +70,7 @@ static void transform_vars_asymmetric_evaluate_constraint(coco_problem_t *proble
                                                           double *y) {
   size_t i;
   double exponent;
+  double *asymmetric_x;
   transform_vars_asymmetric_data_t *data;
   coco_problem_t *inner_problem;
   
@@ -77,17 +81,19 @@ static void transform_vars_asymmetric_evaluate_constraint(coco_problem_t *proble
 
   data = (transform_vars_asymmetric_data_t *) coco_problem_transformed_get_data(problem);
   inner_problem = coco_problem_transformed_get_inner_problem(problem);
+  asymmetric_x = coco_allocate_vector(problem->number_of_variables);
 
   for (i = 0; i < problem->number_of_variables; ++i) {
     if (x[i] > 0.0) {
       exponent = 1.0
           + ((data->beta * (double) (long) i) / ((double) (long) problem->number_of_variables - 1.0)) * sqrt(x[i]);
-      data->x[i] = pow(x[i], exponent);
+      asymmetric_x[i] = pow(x[i], exponent);
     } else {
-      data->x[i] = x[i];
+      asymmetric_x[i] = x[i];
     }
   }
-  coco_evaluate_constraint(inner_problem, data->x, y);
+  coco_evaluate_constraint(inner_problem, asymmetric_x, y);
+  coco_free_memory(asymmetric_x);
 }
 
 static void transform_vars_asymmetric_free(void *thing) {

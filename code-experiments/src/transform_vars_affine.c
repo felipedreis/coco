@@ -12,6 +12,7 @@
  */
 
 #include <assert.h>
+#include <pthread.h>
 
 #include "coco.h"
 #include "coco_problem.c"
@@ -41,16 +42,19 @@ static void transform_vars_affine_evaluate_function(coco_problem_t *problem, con
   data = (transform_vars_affine_data_t *) coco_problem_transformed_get_data(problem);
   inner_problem = coco_problem_transformed_get_inner_problem(problem);
 
+  double *transformed_x = coco_allocate_vector(inner_problem->number_of_variables);
+
   for (i = 0; i < inner_problem->number_of_variables; ++i) {
     /* data->M has problem->number_of_variables columns and inner_problem->number_of_variables rows. */
     const double *current_row = data->M + i * problem->number_of_variables;
-    data->x[i] = data->b[i];
+    transformed_x[i] = data->b[i];
     for (j = 0; j < problem->number_of_variables; ++j) {
-      data->x[i] += x[j] * current_row[j];
+      transformed_x[i] += x[j] * current_row[j];
     }
   }
   
-  coco_evaluate_function(inner_problem, data->x, y);
+  coco_evaluate_function(inner_problem, transformed_x, y);
+  coco_free_memory(transformed_x);
   
   if (problem->number_of_constraints > 0) {
     cons_values = coco_allocate_vector(problem->number_of_constraints);

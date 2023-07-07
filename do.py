@@ -566,7 +566,7 @@ def test_octave():
         sys.exit(-1)
 
 
-def build_octave_sms():
+def build_octaxve_sms():
     """Builds the SMS-EMOA in Octave """
     global RELEASE
     destination_folder = 'code-experiments/examples/bbob-biobj-matlab-smsemoa'
@@ -618,20 +618,21 @@ def build_java():
     """ Builds the example experiment in Java """
     global RELEASE
     amalgamate(CORE_FILES + ['code-experiments/src/coco_runtime_c.c'],
-               'code-experiments/build/java/coco.c', RELEASE,
+               'code-experiments/build/src/main/native/coco.c', RELEASE,
                {"COCO_VERSION": git_version(pep440=True)})
-    expand_file('code-experiments/src/coco.h', 'code-experiments/build/java/coco.h',
+    expand_file('code-experiments/src/coco.h', 'code-experiments/build/src/main/native/coco.h',
                 {'COCO_VERSION': git_version(pep440=True)})
-    write_file(git_revision(), "code-experiments/build/java/REVISION")
-    write_file(git_version(), "code-experiments/build/java/VERSION")
+    write_file(git_revision(), "code-experiments/build/src/main/resources/REVISION")
+    write_file(git_version(), "code-experiments/build/src/main/resources/VERSION")
 
     javacpath = executable_path('javac')
-    javahpath = executable_path('javah')
+    javahpath = None #executable_path('javah')
     if javacpath and javahpath:
-        run('code-experiments/build/java', ['javac', '-classpath', '.', 'CocoJNI.java'], verbose=_verbosity)
-        run('code-experiments/build/java', ['javah', '-classpath', '.', 'CocoJNI'], verbose=_verbosity)
+        run('code-experiments/build/src/main/java', ['javac', '-classpath', '.', 'CocoJNI.java'], verbose=_verbosity)
+        run('code-experiments/build/src/main/java', ['javah', '-classpath', '.', 'CocoJNI'], verbose=_verbosity)
     elif javacpath:
-        run('code-experiments/build/java', ['javac', '-h', '.', 'CocoJNI.java'], verbose=_verbosity)
+        run('code-experiments/build/src/main/java', ['javac', '-h', '.', 'coco/CocoJNI.java'], verbose=_verbosity)
+        print(javacpath)
     else:
         raise RuntimeError('Can not find javac path!')
 
@@ -699,30 +700,36 @@ def build_java():
         jdkversion = check_output(['javac', '-version'], stderr=STDOUT,
                                   env=os.environ, universal_newlines=True)
         jdkversion = jdkversion.split()[1]
-        jdkpath = '/System/Library/Frameworks/JavaVM.framework/Headers'
-        jdkpath1 = ('/Library/Java/JavaVirtualMachines/jdk' +
-                    jdkversion + '.jdk/Contents/Home/include')
+        print(jdkversion)
+        #jdkpath = '/System/Library/Frameworks/JavaVM.framework/Headers'
+        #jdkpath1 = ('/Library/Java/JavaVirtualMachines/jdk' +
+        #            jdkversion + '.jdk/Contents/Home/include')
+        jdkpath = '/opt/homebrew/opt/openjdk@11'
+        jdkpath1 = jdkpath + '/include'
         jdkpath2 = jdkpath1 + '/darwin'
-        run('code-experiments/build/java',
+        run('code-experiments/build/src/main/native',
             ['gcc', '-I', jdkpath, '-I', jdkpath1, '-I', jdkpath2, '-c', 'CocoJNI.c'],
             verbose=_verbosity)
-        run('code-experiments/build/java',
+        run('code-experiments/build/src/main/native',
             ['gcc', '-dynamiclib', '-o', 'libCocoJNI.jnilib', 'CocoJNI.o'],
             verbose=_verbosity)
 
-    run('code-experiments/build/java', ['javac', '-classpath', '.', 'Problem.java'], verbose=_verbosity)
-    run('code-experiments/build/java', ['javac', '-classpath', '.', 'Benchmark.java'], verbose=_verbosity)
-    run('code-experiments/build/java', ['javac', '-classpath', '.', 'Observer.java'], verbose=_verbosity)
-    run('code-experiments/build/java', ['javac', '-classpath', '.', 'Suite.java'], verbose=_verbosity)
-    run('code-experiments/build/java', ['javac', '-classpath', '.', 'ExampleExperiment.java'], verbose=_verbosity)
+        run('code-experiments/build/src/main/native',
+            ['gcc', '-I', jdkpath1, '-I', jdkpath2, '-o',
+             'libCocoJNI.so', '-fPIC', '-shared', 'CocoJNI.c'],
+            verbose=_verbosity)
+
+        run('code-experiments/build/src/main/java',
+            ['jar', '-cvf', 'coco.jar', 'coco/CocoJNI.class'])
+
 
 
 def run_java():
     """ Builds and runs the example experiment in Java """
     build_java()
     try:
-        run('code-experiments/build/java',
-            ['java', '-classpath', '.', '-Djava.library.path=.', 'ExampleExperiment'],
+        run('code-experiments/build/src/main/java',
+            ['java', '-classpath', '.', '-Djava.library.path=../native/', 'ExampleExperiment'],
             verbose=_verbosity)
     except subprocess.CalledProcessError:
         sys.exit(-1)

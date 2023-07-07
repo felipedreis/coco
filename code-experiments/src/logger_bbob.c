@@ -18,6 +18,7 @@
 #include <float.h>
 #include <math.h>
 #include <errno.h>
+#include <pthread.h>
 
 #include "coco.h"
 
@@ -370,6 +371,12 @@ static void logger_bbob_openIndexFile(logger_bbob_data_t *logger,
  * data if these don't already exist
  */
 static void logger_bbob_initialize(logger_bbob_data_t *logger, coco_problem_t *inner_problem) {
+  pthread_mutex_lock(&inner_problem->mutex);
+
+  if (logger->is_initialized){
+    pthread_mutex_unlock(&inner_problem->mutex);
+    return;
+  }
   /*
    Creates/opens the data and index files
    */
@@ -423,6 +430,7 @@ static void logger_bbob_initialize(logger_bbob_data_t *logger, coco_problem_t *i
   coco_free_memory(tmpc_dim);
   coco_free_memory(tmpc_funId);
   coco_free_memory(bbob_infoFile_firstInstance_char);
+  pthread_mutex_unlock(&inner_problem->mutex);
 }
 
 /**

@@ -342,6 +342,12 @@ const char *coco_observer_get_result_folder(const coco_observer_t *observer);
  */
 void coco_evaluate_function(coco_problem_t *problem, const double *x, double *y);
 
+void coco_problem_increment_evaluate_function(coco_problem_t *problem);
+
+void coco_problem_increment_evaluate_constraint(coco_problem_t *problem);
+
+void coco_problem_set_best_observed_f_value(coco_problem_t *problem, double *y);
+
 /**
  * @brief Evaluates the problem constraints in point x and save the result in y.
  */

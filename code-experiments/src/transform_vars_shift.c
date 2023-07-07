@@ -4,6 +4,7 @@
  */
 
 #include <assert.h>
+#include <pthread.h>
 
 #include "coco.h"
 #include "coco_problem.c"
@@ -23,6 +24,7 @@ typedef struct {
 static void transform_vars_shift_evaluate_function(coco_problem_t *problem, const double *x, double *y) {
   size_t i;
   double *cons_values;
+  double *shifted_x;
   int is_feasible;
   transform_vars_shift_data_t *data;
   coco_problem_t *inner_problem;
@@ -34,13 +36,14 @@ static void transform_vars_shift_evaluate_function(coco_problem_t *problem, cons
 
   data = (transform_vars_shift_data_t *) coco_problem_transformed_get_data(problem);
   inner_problem = coco_problem_transformed_get_inner_problem(problem);
-
+  shifted_x = coco_allocate_vector(problem->number_of_variables);
   for (i = 0; i < problem->number_of_variables; ++i) {
-    data->shifted_x[i] = x[i] - data->offset[i];
+    shifted_x[i] = x[i] - data->offset[i];
   }
   
-  coco_evaluate_function(inner_problem, data->shifted_x, y);
-  
+  coco_evaluate_function(inner_problem, shifted_x, y);
+  coco_free_memory(shifted_x);
+
   if (problem->number_of_constraints > 0) {
     cons_values = coco_allocate_vector(problem->number_of_constraints);
     is_feasible = coco_is_feasible(problem, x, cons_values);

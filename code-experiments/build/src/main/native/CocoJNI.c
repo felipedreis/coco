@@ -20,7 +20,7 @@
  * Method:    cocoSetLogLevel
  * Signature: (Ljava/lang/String;)V
  */
-JNIEXPORT void JNICALL Java_CocoJNI_cocoSetLogLevel
+JNIEXPORT void JNICALL Java_coco_CocoJNI_cocoSetLogLevel
 (JNIEnv *jenv, jclass interface_cls, jstring jlog_level) {
 
   const char *log_level;
@@ -43,7 +43,7 @@ JNIEXPORT void JNICALL Java_CocoJNI_cocoSetLogLevel
  * Method:    cocoGetObserver
  * Signature: (Ljava/lang/String;Ljava/lang/String;)J
  */
-JNIEXPORT jlong JNICALL Java_CocoJNI_cocoGetObserver
+JNIEXPORT jlong JNICALL Java_coco_CocoJNI_cocoGetObserver
 (JNIEnv *jenv, jclass interface_cls, jstring jobserver_name, jstring jobserver_options) {
 
   coco_observer_t *observer = NULL;
@@ -69,7 +69,7 @@ JNIEXPORT jlong JNICALL Java_CocoJNI_cocoGetObserver
  * Method:    cocoProblemAddObserver
  * Signature: (JJ)J
  */
-JNIEXPORT jlong JNICALL Java_CocoJNI_cocoProblemAddObserver
+JNIEXPORT jlong JNICALL Java_coco_CocoJNI_cocoProblemAddObserver
 (JNIEnv *jenv, jclass interface_cls, jlong jproblem_pointer, jlong jobserver_pointer) {
 
   coco_observer_t *observer = NULL;
@@ -95,7 +95,7 @@ JNIEXPORT jlong JNICALL Java_CocoJNI_cocoProblemAddObserver
  * Method:    cocoProblemRemoveObserver
  * Signature: (JJ)J
  */
-JNIEXPORT jlong JNICALL Java_CocoJNI_cocoProblemRemoveObserver
+JNIEXPORT jlong JNICALL Java_coco_CocoJNI_cocoProblemRemoveObserver
 (JNIEnv *jenv, jclass interface_cls, jlong jproblem_pointer, jlong jobserver_pointer) {
 
   coco_observer_t *observer = NULL;
@@ -121,7 +121,7 @@ JNIEXPORT jlong JNICALL Java_CocoJNI_cocoProblemRemoveObserver
  * Method:    cocoFinalizeObserver
  * Signature: (J)V
  */
-JNIEXPORT void JNICALL Java_CocoJNI_cocoFinalizeObserver
+JNIEXPORT void JNICALL Java_coco_CocoJNI_cocoFinalizeObserver
 (JNIEnv *jenv, jclass interface_cls, jlong jobserver_pointer) {
 
   coco_observer_t *observer = NULL;
@@ -142,7 +142,7 @@ JNIEXPORT void JNICALL Java_CocoJNI_cocoFinalizeObserver
  * Method:    cocoGetSuite
  * Signature: (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)J
  */
-JNIEXPORT jlong JNICALL Java_CocoJNI_cocoGetSuite
+JNIEXPORT jlong JNICALL Java_coco_CocoJNI_cocoGetSuite
 (JNIEnv *jenv, jclass interface_cls, jstring jsuite_name, jstring jsuite_instance, jstring jsuite_options) {
 
   coco_suite_t *suite = NULL;
@@ -170,7 +170,7 @@ JNIEXPORT jlong JNICALL Java_CocoJNI_cocoGetSuite
  * Method:    cocoFinalizeSuite
  * Signature: (J)V
  */
-JNIEXPORT void JNICALL Java_CocoJNI_cocoFinalizeSuite
+JNIEXPORT void JNICALL Java_coco_CocoJNI_cocoFinalizeSuite
 (JNIEnv *jenv, jclass interface_cls, jlong jsuite_pointer) {
 
   coco_suite_t *suite = NULL;
@@ -191,7 +191,7 @@ JNIEXPORT void JNICALL Java_CocoJNI_cocoFinalizeSuite
  * Method:    cocoSuiteGetNextProblem
  * Signature: (JJ)J
  */
-JNIEXPORT jlong JNICALL Java_CocoJNI_cocoSuiteGetNextProblem
+JNIEXPORT jlong JNICALL Java_coco_CocoJNI_cocoSuiteGetNextProblem
 (JNIEnv *jenv, jclass interface_cls, jlong jsuite_pointer, jlong jobserver_pointer) {
 
   coco_problem_t *problem = NULL;
@@ -219,7 +219,7 @@ JNIEXPORT jlong JNICALL Java_CocoJNI_cocoSuiteGetNextProblem
  * Method:    cocoSuiteGetProblem
  * Signature: (JJ)J
  */
-JNIEXPORT jlong JNICALL Java_CocoJNI_cocoSuiteGetProblem
+JNIEXPORT jlong JNICALL Java_coco_CocoJNI_cocoSuiteGetProblem
 (JNIEnv *jenv, jclass interface_cls, jlong jsuite_pointer, jlong jproblem_index) {
 
   coco_problem_t *problem = NULL;
@@ -245,7 +245,7 @@ JNIEXPORT jlong JNICALL Java_CocoJNI_cocoSuiteGetProblem
  * Method:    cocoEvaluateFunction
  * Signature: (J[D)[D
  */
-JNIEXPORT jdoubleArray JNICALL Java_CocoJNI_cocoEvaluateFunction
+JNIEXPORT jdoubleArray JNICALL Java_coco_CocoJNI_cocoEvaluateFunction
 (JNIEnv *jenv, jclass interface_cls, jlong jproblem_pointer, jdoubleArray jx) {
 
   coco_problem_t *problem = NULL;
@@ -283,7 +283,7 @@ JNIEXPORT jdoubleArray JNICALL Java_CocoJNI_cocoEvaluateFunction
  * Method:    cocoEvaluateConstraint
  * Signature: (J[D)[D
  */
-JNIEXPORT jdoubleArray JNICALL Java_CocoJNI_cocoEvaluateConstraint
+JNIEXPORT jdoubleArray JNICALL Java_coco_CocoJNI_cocoEvaluateConstraint
 (JNIEnv *jenv, jclass interface_cls, jlong jproblem_pointer, jdoubleArray jx) {
 
   coco_problem_t *problem = NULL;
@@ -321,7 +321,7 @@ JNIEXPORT jdoubleArray JNICALL Java_CocoJNI_cocoEvaluateConstraint
  * Method:    cocoProblemGetDimension
  * Signature: (J)I
  */
-JNIEXPORT jint JNICALL Java_CocoJNI_cocoProblemGetDimension
+JNIEXPORT jint JNICALL Java_coco_CocoJNI_cocoProblemGetDimension
 (JNIEnv *jenv, jclass interface_cls, jlong jproblem_pointer) {
 
   coco_problem_t *problem = NULL;
@@ -343,7 +343,7 @@ JNIEXPORT jint JNICALL Java_CocoJNI_cocoProblemGetDimension
  * Method:    cocoProblemGetNumberOfObjectives
  * Signature: (J)I
  */
-JNIEXPORT jint JNICALL Java_CocoJNI_cocoProblemGetNumberOfObjectives
+JNIEXPORT jint JNICALL Java_coco_CocoJNI_cocoProblemGetNumberOfObjectives
 (JNIEnv *jenv, jclass interface_cls, jlong jproblem_pointer) {
 
   coco_problem_t *problem = NULL;
@@ -365,7 +365,7 @@ JNIEXPORT jint JNICALL Java_CocoJNI_cocoProblemGetNumberOfObjectives
  * Method:    cocoProblemGetNumberOfConstraints
  * Signature: (J)I
  */
-JNIEXPORT jint JNICALL Java_CocoJNI_cocoProblemGetNumberOfConstraints
+JNIEXPORT jint JNICALL Java_coco_CocoJNI_cocoProblemGetNumberOfConstraints
 (JNIEnv *jenv, jclass interface_cls, jlong jproblem_pointer) {
 
   coco_problem_t *problem = NULL;
@@ -387,7 +387,7 @@ JNIEXPORT jint JNICALL Java_CocoJNI_cocoProblemGetNumberOfConstraints
  * Method:    cocoProblemGetSmallestValuesOfInterest
  * Signature: (J)[D
  */
-JNIEXPORT jdoubleArray JNICALL Java_CocoJNI_cocoProblemGetSmallestValuesOfInterest
+JNIEXPORT jdoubleArray JNICALL Java_coco_CocoJNI_cocoProblemGetSmallestValuesOfInterest
 (JNIEnv *jenv, jclass interface_cls, jlong jproblem_pointer) {
 
   coco_problem_t *problem = NULL;
@@ -416,7 +416,7 @@ JNIEXPORT jdoubleArray JNICALL Java_CocoJNI_cocoProblemGetSmallestValuesOfIntere
  * Method:    cocoProblemGetLargestValuesOfInterest
  * Signature: (J)[D
  */
-JNIEXPORT jdoubleArray JNICALL Java_CocoJNI_cocoProblemGetLargestValuesOfInterest
+JNIEXPORT jdoubleArray JNICALL Java_coco_CocoJNI_cocoProblemGetLargestValuesOfInterest
 (JNIEnv *jenv, jclass interface_cls, jlong jproblem_pointer) {
 
   coco_problem_t *problem = NULL;
@@ -445,7 +445,7 @@ JNIEXPORT jdoubleArray JNICALL Java_CocoJNI_cocoProblemGetLargestValuesOfInteres
  * Method:    cocoProblemGetNumberOfIntegerVariables
  * Signature: (J)I
  */
-JNIEXPORT jint JNICALL Java_CocoJNI_cocoProblemGetNumberOfIntegerVariables
+JNIEXPORT jint JNICALL Java_coco_CocoJNI_cocoProblemGetNumberOfIntegerVariables
 (JNIEnv *jenv, jclass interface_cls, jlong jproblem_pointer) {
 
   coco_problem_t *problem = NULL;
@@ -467,7 +467,7 @@ JNIEXPORT jint JNICALL Java_CocoJNI_cocoProblemGetNumberOfIntegerVariables
  * Method:    cocoProblemGetLargestFValuesOfInterest
  * Signature: (J)[D
  */
-JNIEXPORT jdoubleArray JNICALL Java_CocoJNI_cocoProblemGetLargestFValuesOfInterest
+JNIEXPORT jdoubleArray JNICALL Java_coco_CocoJNI_cocoProblemGetLargestFValuesOfInterest
 (JNIEnv *jenv, jclass interface_cls, jlong jproblem_pointer) {
 
   coco_problem_t *problem = NULL;
@@ -498,7 +498,7 @@ JNIEXPORT jdoubleArray JNICALL Java_CocoJNI_cocoProblemGetLargestFValuesOfIntere
  * Method:    cocoProblemGetId
  * Signature: (J)Ljava/lang/String;
  */
-JNIEXPORT jstring JNICALL Java_CocoJNI_cocoProblemGetId
+JNIEXPORT jstring JNICALL Java_coco_CocoJNI_cocoProblemGetId
 (JNIEnv *jenv, jclass interface_cls, jlong jproblem_pointer) {
 
   coco_problem_t *problem = NULL;
@@ -522,7 +522,7 @@ JNIEXPORT jstring JNICALL Java_CocoJNI_cocoProblemGetId
  * Method:    cocoProblemGetName
  * Signature: (J)Ljava/lang/String;
  */
-JNIEXPORT jstring JNICALL Java_CocoJNI_cocoProblemGetName
+JNIEXPORT jstring JNICALL Java_coco_CocoJNI_cocoProblemGetName
 (JNIEnv *jenv, jclass interface_cls, jlong jproblem_pointer) {
 
   coco_problem_t *problem = NULL;
@@ -546,7 +546,7 @@ JNIEXPORT jstring JNICALL Java_CocoJNI_cocoProblemGetName
  * Method:    cocoProblemGetEvaluations
  * Signature: (J)J
  */
-JNIEXPORT jlong JNICALL Java_CocoJNI_cocoProblemGetEvaluations
+JNIEXPORT jlong JNICALL Java_coco_CocoJNI_cocoProblemGetEvaluations
 (JNIEnv *jenv, jclass interface_cls, jlong jproblem_pointer) {
 
   coco_problem_t *problem = NULL;
@@ -568,7 +568,7 @@ JNIEXPORT jlong JNICALL Java_CocoJNI_cocoProblemGetEvaluations
  * Method:    cocoProblemGetEvaluationsConstraints
  * Signature: (J)J
  */
-JNIEXPORT jlong JNICALL Java_CocoJNI_cocoProblemGetEvaluationsConstraints
+JNIEXPORT jlong JNICALL Java_coco_CocoJNI_cocoProblemGetEvaluationsConstraints
 (JNIEnv *jenv, jclass interface_cls, jlong jproblem_pointer) {
     
   coco_problem_t *problem = NULL;
@@ -590,7 +590,7 @@ JNIEXPORT jlong JNICALL Java_CocoJNI_cocoProblemGetEvaluationsConstraints
  * Method:    cocoProblemGetIndex
  * Signature: (J)J
  */
-JNIEXPORT jlong JNICALL Java_CocoJNI_cocoProblemGetIndex
+JNIEXPORT jlong JNICALL Java_coco_CocoJNI_cocoProblemGetIndex
 (JNIEnv *jenv, jclass interface_cls, jlong jproblem_pointer) {
 
   coco_problem_t *problem = NULL;
@@ -612,7 +612,7 @@ JNIEXPORT jlong JNICALL Java_CocoJNI_cocoProblemGetIndex
  * Method:    cocoProblemIsFinalTargetHit
  * Signature: (J)I
  */
-JNIEXPORT jint JNICALL Java_CocoJNI_cocoProblemIsFinalTargetHit
+JNIEXPORT jint JNICALL Java_coco_CocoJNI_cocoProblemIsFinalTargetHit
 (JNIEnv *jenv, jclass interface_cls, jlong jproblem_pointer) {
 
   coco_problem_t *problem = NULL;

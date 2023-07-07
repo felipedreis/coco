@@ -9,9 +9,28 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
+#include <execinfo.h>
 
 #include "coco.h"
 #include "coco_utilities.c"
+
+void print_trace (void)
+{
+  void *array[100];
+  char **strings;
+  int size, i;
+
+  size = backtrace (array, 100);
+  strings = backtrace_symbols (array, size);
+  if (strings != NULL)
+  {
+    printf ("Obtained %d stack frames.\n", size);
+    for (i = 0; i < size; i++)
+      printf ("%s\n", strings[i]);
+  }
+
+  free (strings);
+}
 
 void coco_error(const char *message, ...) {
   va_list args;
@@ -21,6 +40,7 @@ void coco_error(const char *message, ...) {
   vfprintf(stderr, message, args);
   va_end(args);
   fprintf(stderr, "\n");
+  print_trace();
   exit(EXIT_FAILURE);
 }
 
