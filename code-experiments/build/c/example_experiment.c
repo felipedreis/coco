@@ -50,8 +50,8 @@ typedef struct evaluate_args {
 } evaluate_args_t;
 
 
-static void pthread_evaluate_func(evaluate_args_t evaluate_args) {
-    coco_evaluate_function(PROBLEM, evaluate_args.x, evaluate_args.y);
+static void pthread_evaluate_func(evaluate_args_t *evaluate_args) {
+    coco_evaluate_function(PROBLEM, evaluate_args->x, evaluate_args->y);
 }
 
 /**
@@ -61,17 +61,19 @@ static void pthread_evaluate_func(evaluate_args_t evaluate_args) {
 static void evaluate_function(const double *x, double *y) {
   pthread_t threads[10];
   int i;
-  printf("pointer to y %d\n", y);
-  fflush(&stdout);
-  evaluate_args_t evaluate_args;
-  evaluate_args.x = x;
-  evaluate_args.y = y;
+  int number_of_objectives = coco_problem_get_number_of_objectives(PROBLEM);
+  evaluate_args_t args[10];
 
-  for (i = 0; i < 10; ++i)
-    pthread_create(&threads[i], NULL, &pthread_evaluate_func, &evaluate_args);
-
-  for (i = 0; i < 10; ++i)
+  for (i = 0; i < 10; ++i) {
+    evaluate_args_t evaluate_args;
+    args[i].x = x;
+    args[i].y = coco_allocate_vector(number_of_objectives);
+    pthread_create(&threads[i], NULL, &pthread_evaluate_func, &args[i]);
+  }
+  for (i = 0; i < 10; ++i) {
     pthread_join(threads[i], NULL);
+    free(args[i].y);
+  }
 
   /*coco_evaluate_function(PROBLEM, x, y);*/
 }
